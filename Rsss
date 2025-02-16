@@ -1,0 +1,27 @@
+import os
+import time
+import requests
+import feedparser
+from telegram import Bot
+
+# Atrof-muhit o'zgaruvchilari
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+CHANNEL_ID = os.getenv("CHANNEL_ID")
+RSS_FEED_URL = "https://your-rss-feed-url.com/rss"
+
+bot = Bot(token=TELEGRAM_BOT_TOKEN)
+
+def send_telegram_post(message):
+    bot.send_message(chat_id=CHANNEL_ID, text=message, parse_mode="HTML")
+
+def check_rss():
+    feed = feedparser.parse(RSS_FEED_URL)
+    if feed.entries:
+        latest_entry = feed.entries[0]
+        message = f"✅ CONFIRMED ENTRY!\n\n👉 {latest_entry.title}\n🔗 {latest_entry.link}"
+        send_telegram_post(message)
+
+if __name__ == "__main__":
+    while True:
+        check_rss()
+        time.sleep(180)  # Har 3 daqiqada RSSni tekshiradi
